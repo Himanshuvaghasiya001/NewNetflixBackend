@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: NewNetflixBackend
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn mypractice.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:///db.sqlite3
+      - key: PYTHON_VERSION
+        value: 3.12.3
