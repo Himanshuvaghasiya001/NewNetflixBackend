@@ -16,11 +16,29 @@ User = get_user_model()
 
 @api_view(['POST'])
 def register_user(request):
-    serializer = RegisterSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({'message': 'User created successfully'},status=status.HTTP_201_CREATED)
-    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        email = request.data.get("email")
+        password = request.data.get("password")
+        username = request.data.get("username")
+        
+        if User.objects.filter(email=email).exists() :
+            return Response({'email': 'Email already exists'},status=status.HTTP_400_BAD_REQUEST)
+        
+        if len(password) < 6:
+            return Response({'password': 'Password must be at least 6 characters'},status=status.HTTP_400_BAD_REQUEST)
+        
+        if len(password) < 6:
+            return Response({'password': 'Password must be at least 6 characters'},status=status.HTTP_400_BAD_REQUEST)
+
+        if password.lower() in ["password", "123456", "abcdef", "abc123"]:
+            return Response({'password': 'Password is too common'},status=status.HTTP_400_BAD_REQUEST)
+        
+        user = User.objects.create(username=username,email=email,password=password)
+        user.save()
+        return Response({"message": "User registered successfully!"}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({"message": str(e)},status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def login_user(request):
