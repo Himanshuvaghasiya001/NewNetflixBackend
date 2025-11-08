@@ -28,13 +28,13 @@ def register_user(request):
         if len(password) < 6:
             return Response({'password': 'Password must be at least 6 characters'},status=status.HTTP_400_BAD_REQUEST)
         
-        if len(password) < 6:
+        if len(password) < 8:
             return Response({'password': 'Password must be at least 6 characters'},status=status.HTTP_400_BAD_REQUEST)
 
         if password.lower() in ["password", "123456", "abcdef", "abc123"]:
             return Response({'password': 'Password is too common'},status=status.HTTP_400_BAD_REQUEST)
         
-        user = User.objects.create(username=username,email=email,password=password)
+        user = User.objects.create_user(username=username,email=email,password=password)
         user.save()
         return Response({"message": "User registered successfully!"}, status=status.HTTP_201_CREATED)
     except Exception as e:
